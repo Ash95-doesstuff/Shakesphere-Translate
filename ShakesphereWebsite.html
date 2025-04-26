@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shakespeare AI Translator</title>
+    <style>
+        body {
+            font-family: 'Times New Roman', serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f8f4e8;
+            color: #3a2d13;
+        }
+        h1 {
+            text-align: center;
+            color: #8b4513;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        textarea {
+            width: 100%;
+            height: 150px;
+            padding: 10px;
+            font-size: 16px;
+            border: 2px solid #8b4513;
+            border-radius: 5px;
+            background-color: #fff9e6;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #8b4513;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            align-self: center;
+        }
+        button:hover {
+            background-color: #6b3410;
+        }
+        .result {
+            padding: 15px;
+            border: 2px dashed #8b4513;
+            border-radius: 5px;
+            min-height: 100px;
+            background-color: #fff9e6;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Shakespeare AI Translator</h1>
+        <textarea id="inputText" placeholder="Enter your modern text here..."></textarea>
+        <button onclick="translateToShakespeare()">Translate!</button>
+        <div class="result" id="result">
+            <div id="loading" style="display: none;">
+                Translating... Please wait
+                <i class="fas fa-spinner fa-spin"></i>
+            </div>
+            <div id="translationResult">Thy translation shall appear here...</div>
+        </div>
+    </div>
+
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <script>
+        async function translateToShakespeare() {
+            const inputText = document.getElementById('inputText').value.trim();
+
+            if (inputText === '') {
+                document.getElementById('translationResult').textContent = 'Please entereth some text to translate!';
+                return;
+            }
+
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('translationResult').textContent = '';
+
+            try {
+                const completion = await websim.chat.completions.create({
+                    messages: [{
+                        role: "system",
+                        content: `Thou art a master of Shakespearean English. When given modern text, translate it into elaborate authentic Shakespearean English,
+                        using rich vocabulary, poetic flourishes, and dramatic expansions.
+                        Expand simple modern phrases into lengthy monologues as lengthy as the Nile. 
+                        Expand every single modern word into 5-10 words of the most Shakespearean phrases.
+                        Example transformation: 
+                        Input: "Help"
+                        Output: "Hark, my good fellow! What glad tidings ring through the air; the air at thine arrival! What teem air at thine arrival! The sun doth smile upon this most opportune a most fortuitous meeting of kindred souls. Mayhapst souls. Mayhaps thou wouldst grant me the pleasure of thy company for of thy company for yet another while of thy wondrous conversation!"`
+                    },
+                    {
+                        role: "user",
+                        content: inputText
+                    }]
+                });
+
+                document.getElementById('translationResult').textContent = completion.content;
+            } catch (error) {
+                console.error(error);
+                document.getElementById('translationResult').textContent = "Alas, our fair translation attempt hast failed! The muses have forsaken us. Perchance the fates conspire against thee. Prithee, try again somewhen anon!";
+            } finally {
+                document.getElementById('loading').style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>
